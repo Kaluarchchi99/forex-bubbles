@@ -9,23 +9,24 @@ const API_KEY = "183028b2104b4abc8e4cede89ec43943";
 const symbols = pairs.map(p => p.replace("/", "")).join(",");
 
 function fetchData() {
-  container.innerHTML = "";
-
   fetch(`https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${API_KEY}`)
     .then(response => response.json())
     .then(data => {
+      container.innerHTML = "";
+
       pairs.forEach(pair => {
         const symbol = pair.replace("/", "");
         const info = data[symbol];
-        const changePercent = parseFloat(info?.percent_change);
 
         const bubble = document.createElement("div");
         bubble.className = "bubble";
 
-        if (isNaN(changePercent)) {
-          bubble.classList.add("red");
+        if (!info || !info.percent_change || isNaN(info.percent_change)) {
+          // Display as unavailable
+          bubble.classList.add("gray");
           bubble.innerHTML = `${pair}<br/>N/A`;
         } else {
+          const changePercent = parseFloat(info.percent_change);
           const direction = changePercent < 0 ? "▼" : "▲";
           bubble.classList.add(changePercent < 0 ? "red" : "green");
           bubble.innerHTML = `${pair}<br/>${direction} ${Math.abs(changePercent).toFixed(2)}%`;
@@ -36,8 +37,10 @@ function fetchData() {
     })
     .catch(err => {
       console.error("Error fetching data:", err);
+      // Keep old bubbles visible (don’t clear)
     });
 }
+
 
 let countdown = 15;
 function startCountdown() {
