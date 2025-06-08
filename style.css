@@ -1,49 +1,53 @@
 body {
+  background-color: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
-  color: #ffffff;
-  font-family: 'Arial', sans-serif;
-  text-align: center;
-  overflow: hidden;
 }
 
 h1 {
-  margin: 20px 0;
-  font-size: 2em;
+  margin: 20px 0 10px;
 }
 
-#bubble-container {
-  position: relative;
-  width: 100vw;
-  height: 90vh;
-  overflow: hidden;
+.countdown {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+#bubbles-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
 }
 
 .bubble {
-  position: absolute;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  color: #fff;
+  background-color: green;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  text-align: center;
-  font-size: 14px;
+  align-items: center;
+  color: white;
   font-weight: bold;
-  animation: float 20s infinite ease-in-out;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  white-space: pre-line;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-40px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+.bubble:hover {
+  transform: scale(1.1);
+}
+
+.bubble.red {
+  background-color: red;
+}
+
+.bubble.green {
+  background-color: green;
 }
