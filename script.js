@@ -36,18 +36,33 @@ async function getForexChange(pair) {
   }
 }
 
-// Build and show the bubble
-function createBubble(data) {
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerText = `${data.pair}\n${data.change}%`;
+async function updateBubbles() {
+  const data = await fetchForexData();
+  if (!data) return;
 
-  bubble.style.backgroundColor = data.change >= 0 ? "#4caf50" : "#f44336";
-  const size = 80 + Math.abs(data.change) * 100;
-  bubble.style.width = `${size}px`;
-  bubble.style.height = `${size}px`;
+  const container = document.getElementById("bubble-container");
+  container.innerHTML = "";
 
-  container.appendChild(bubble);
+  for (const pair of currencyPairs) {
+    const change = data[pair];
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+
+    // ✅ Add arrow indicator
+    let arrow = change > 0 ? '▲' : change < 0 ? '▼' : '➖';
+    bubble.textContent = `${pair}\n${arrow} ${change.toFixed(2)}%`;
+
+    // Bubble color
+    if (change > 0) {
+      bubble.style.backgroundColor = "rgba(0, 200, 0, 0.7)";
+    } else if (change < 0) {
+      bubble.style.backgroundColor = "rgba(200, 0, 0, 0.7)";
+    } else {
+      bubble.style.backgroundColor = "rgba(128, 128, 128, 0.7)";
+    }
+
+    container.appendChild(bubble);
+  }
 }
 
 // Main function to load everything
