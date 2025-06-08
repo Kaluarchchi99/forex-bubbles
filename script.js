@@ -2,53 +2,43 @@ const pairs = ["EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "USD/CAD", "NZD/USD",
 const container = document.getElementById("bubbles-container");
 const countdownEl = document.getElementById("countdown");
 
-// ⛳ Replace this with your actual Twelve Data API key
+// 🔑 Replace with your real API key
 const API_KEY = "183028b2104b4abc8e4cede89ec43943";
+
+// Format pairs for Twelve Data (e.g., "EURUSD,GBPUSD,USDJPY")
+const symbols = pairs.map(p => p.replace("/", "")).join(",");
 
 function fetchData() {
   container.innerHTML = "";
 
-  pairs.forEach(pair => {
-    const [base, quote] = pair.split("/");
-    const symbol = `${base}${quote}`;
-
-    fetch(`https://api.twelvedata.com/quote?symbol=${symbol}&apikey=${API_KEY}`)
-      .then(response => response.json())
-      .then(data => {
-        let changePercent = data.percent_change;
-
-        if (!changePercent || isNaN(parseFloat(changePercent))) {
-          changePercent = null; // Invalid or missing data
-        } else {
-          changePercent = parseFloat(changePercent).toFixed(2);
-        }
+  fetch(`https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${API_KEY}`)
+    .then(response => response.json())
+    .then(data => {
+      pairs.forEach(pair => {
+        const symbol = pair.replace("/", "");
+        const info = data[symbol];
+        const changePercent = parseFloat(info?.percent_change);
 
         const bubble = document.createElement("div");
-        let direction = "";
-        let colorClass = "green";
+        bubble.className = "bubble";
 
-        if (changePercent === null) {
+        if (isNaN(changePercent)) {
+          bubble.classList.add("red");
           bubble.innerHTML = `${pair}<br/>N/A`;
         } else {
-          direction = changePercent < 0 ? "▼" : "▲";
-          colorClass = changePercent < 0 ? "red" : "green";
-          bubble.innerHTML = `${pair}<br/>${direction} ${Math.abs(changePercent)}%`;
+          const direction = changePercent < 0 ? "▼" : "▲";
+          bubble.classList.add(changePercent < 0 ? "red" : "green");
+          bubble.innerHTML = `${pair}<br/>${direction} ${Math.abs(changePercent).toFixed(2)}%`;
         }
 
-        bubble.className = `bubble ${colorClass}`;
-        container.appendChild(bubble);
-      })
-      .catch(error => {
-        console.error(`Error fetching ${pair}:`, error);
-        const bubble = document.createElement("div");
-        bubble.className = "bubble red";
-        bubble.innerHTML = `${pair}<br/>Error`;
         container.appendChild(bubble);
       });
-  });
+    })
+    .catch(err => {
+      console.error("Error fetching data:", err);
+    });
 }
 
-// Countdown timer
 let countdown = 15;
 function startCountdown() {
   countdown = 15;
@@ -64,6 +54,6 @@ function startCountdown() {
   }, 1000);
 }
 
-// Initialize
+// Start
 fetchData();
 startCountdown();
