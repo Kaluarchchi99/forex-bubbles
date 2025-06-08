@@ -1,59 +1,49 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #101010;
-  color: white;
-  text-align: center;
   margin: 0;
   padding: 0;
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  overflow: hidden;
 }
 
 h1 {
-  margin-top: 20px;
+  margin: 20px 0;
+  font-size: 2em;
 }
 
 #bubble-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  max-width: 100%;
+  position: relative;
+  width: 100vw;
+  height: 90vh;
+  overflow: hidden;
 }
 
 .bubble {
+  position: absolute;
   border-radius: 50%;
+  color: #fff;
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: white;
-  font-weight: bold;
+  justify-content: center;
   text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  animation: float 20s infinite ease-in-out;
   padding: 10px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  word-wrap: break-word;
-  max-width: 100%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  white-space: pre-line;
 }
 
 @keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}@keyframes float {
-  0% { transform: translate(0px, 0px) rotate(0deg); }
-  50% { transform: translate(10px, -10px) rotate(3deg); }
-  100% { transform: translate(0px, 0px) rotate(0deg); }
-}
-
-.bubble {
-  animation: float 5s ease-in-out infinite;
-}@media (max-width: 600px) {
-  .bubble {
-    font-size: 12px;
+  0% {
+    transform: translateY(0px);
   }
-
-  h1 {
-    font-size: 24px;
+  50% {
+    transform: translateY(-40px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
