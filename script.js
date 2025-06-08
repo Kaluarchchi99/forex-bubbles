@@ -1,16 +1,27 @@
-const pairs = ["EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "USD/CAD", "NZD/USD", "USD/CHF", "EUR/JPY"];
-const container = document.getElementById("bubbles-container");
+const API_KEY = "183028b2104b4abc8e4cede89ec43943"; // Replace with your real API key
+const pairs = [
+  "EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF",
+  "AUD/USD", "NZD/USD", "USD/CAD", "EUR/JPY"
+];
+const symbols = pairs.map(p => p.replace("/", "")).join(",");
+const container = document.getElementById("bubble-container");
 const countdownEl = document.getElementById("countdown");
 
-// 🔑 Replace with your real API key
-const API_KEY = "183028b2104b4abc8e4cede89ec43943";
+let countdown = 30;
+let intervalId;
 
-// Format pairs for Twelve Data (e.g., "EURUSD,GBPUSD,USDJPY")
-const symbols = pairs.map(p => p.replace("/", "")).join(",");
+function updateCountdown() {
+  countdown--;
+  if (countdown <= 0) {
+    fetchData();
+    countdown = 30;
+  }
+  countdownEl.textContent = `Next update in: ${countdown}s`;
+}
 
 function fetchData() {
   fetch(`https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${API_KEY}`)
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
       container.innerHTML = "";
 
@@ -22,41 +33,24 @@ function fetchData() {
         bubble.className = "bubble";
 
         if (!info || !info.percent_change || isNaN(info.percent_change)) {
-          // Display as unavailable
           bubble.classList.add("gray");
           bubble.innerHTML = `${pair}<br/>N/A`;
         } else {
-          const changePercent = parseFloat(info.percent_change);
-          const direction = changePercent < 0 ? "▼" : "▲";
-          bubble.classList.add(changePercent < 0 ? "red" : "green");
-          bubble.innerHTML = `${pair}<br/>${direction} ${Math.abs(changePercent).toFixed(2)}%`;
+          const change = parseFloat(info.percent_change);
+          const direction = change < 0 ? "▼" : "▲";
+          bubble.classList.add(change < 0 ? "red" : "green");
+          bubble.innerHTML = `${pair}<br/>${direction} ${Math.abs(change).toFixed(2)}%`;
         }
 
         container.appendChild(bubble);
       });
     })
     .catch(err => {
-      console.error("Error fetching data:", err);
-      // Keep old bubbles visible (don’t clear)
+      console.error("API fetch error:", err);
+      // Don't clear container, just skip this cycle
     });
 }
 
-
-let countdown = 15;
-function startCountdown() {
-  countdown = 15;
-  const timer = setInterval(() => {
-    countdown--;
-    countdownEl.textContent = `Next update in: ${countdown}s`;
-
-    if (countdown <= 0) {
-      clearInterval(timer);
-      fetchData();
-      startCountdown();
-    }
-  }, 1000);
-}
-
-// Start
+// Start app
 fetchData();
-startCountdown();
+intervalId = setInterval(updateCountdown, 1000);
