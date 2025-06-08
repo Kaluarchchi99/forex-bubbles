@@ -16,7 +16,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-#bubble-container {
+#bubbles {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -36,7 +36,8 @@ h1 {
   color: white;
   font-size: 14px;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  transition: transform 0.2s;
+  transition: transform 0.3s ease;
+  animation: float 6s ease-in-out infinite;
 }
 
 .bubble:hover {
@@ -44,13 +45,22 @@ h1 {
 }
 
 .green {
-  background-color: green;
+  background-color: #28a745;
 }
 
 .red {
-  background-color: red;
+  background-color: #dc3545;
 }
 
-.gray {
+.neutral {
   background-color: gray;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
